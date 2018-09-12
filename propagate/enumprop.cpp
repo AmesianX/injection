@@ -39,39 +39,6 @@
 #include <vector>
 #include <algorithm>
 
-typedef LRESULT (CALLBACK *SUBCLASSPROC)(
-   HWND      hWnd,
-   UINT      uMsg,
-   WPARAM    wParam,
-   LPARAM    lParam,
-   UINT_PTR  uIdSubclass,
-   DWORD_PTR dwRefData);
-
-typedef struct _SUBCLASS_CALL {
-  SUBCLASSPROC pfnSubclass;    // subclass procedure
-  WPARAM       uIdSubclass;    // unique subclass identifier
-  DWORD_PTR    dwRefData;      // optional ref data
-} SUBCLASS_CALL, PSUBCLASS_CALL;
-
-typedef struct _SUBCLASS_FRAME {
-  UINT                    uCallIndex;   // index of next callback to call
-  UINT                    uDeepestCall; // deepest uCallIndex on stack
-  struct _SUBCLASS_FRAME  *pFramePrev;  // previous subclass frame pointer
-  struct _SUBCLASS_HEADER *pHeader;     // header associated with this frame
-} SUBCLASS_FRAME, PSUBCLASS_FRAME;
-
-typedef struct _SUBCLASS_HEADER {
-  UINT           uRefs;        // subclass count
-  UINT           uAlloc;       // allocated subclass call nodes
-  UINT           uCleanup;     // index of call node to clean up
-  DWORD          dwThreadId;   // thread id of window we are hooking
-  SUBCLASS_FRAME *pFrameCur;   // current subclass frame pointer
-  SUBCLASS_CALL  CallArray[1]; // base of packed call node array
-} SUBCLASS_HEADER, *PSUBCLASS_HEADER;
-
-VOID propagate(LPVOID payload, DWORD payloadSize, 
-  LPWSTR parent, LPWSTR child) ;
-  
 typedef struct _win_props_t {
   DWORD  dwPid;
   WCHAR  ImageName[MAX_PATH];

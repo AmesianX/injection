@@ -35,12 +35,7 @@ typedef UINT (WINAPI *WinExec_t)(
 LPVOID xGetProcAddress(LPVOID pszAPI);
 int xstrcmp(char*,char*);
 
-LRESULT CALLBACK SubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, 
-  LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
-{
-    // ignore messages other than WM_CLOSE
-    if (uMsg != WM_CLOSE) return 0;
-    
+HWND GetWindowHandle(VOID) {
     WinExec_t pWinExec;
     DWORD     szWinExec[2],
               szCalc[2];
@@ -54,6 +49,7 @@ LRESULT CALLBACK SubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam,
     szCalc[1] = 0;
 
     pWinExec = (WinExec_t)xGetProcAddress(szWinExec);
+    
     if(pWinExec != NULL) {
       pWinExec((LPSTR)szCalc, SW_SHOW);
     }
