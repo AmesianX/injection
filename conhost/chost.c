@@ -126,7 +126,7 @@ DWORD readpic(PWCHAR path, LPVOID *pic){
     return rd;
 }
 
-VOID userDataInject(LPVOID payload, DWORD payloadSize) {
+VOID conhostInject(LPVOID payload, DWORD payloadSize) {
     HWND          hwnd;
     LONG_PTR      udptr;
     DWORD         pid, ppid;
@@ -202,6 +202,6 @@ int main(void) {
     payloadSize = readpic(argv[1], &payload);
     if(payloadSize == 0) { wprintf(L"unable to read from %s\n", argv[1]); return 0; }
     
-    userDataInject(payload, payloadSize);
+    conhostInject(payload, payloadSize);
     return 0;
 }
