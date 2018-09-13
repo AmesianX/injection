@@ -197,7 +197,7 @@ int main(void) {
     // get parameters
     argv = CommandLineToArgvW(GetCommandLine(), &argc);
     
-    if(argc != 2) { wprintf(L"usage: userdata <payload>\n"); return 0; }
+    if(argc != 2) { wprintf(L"usage: chost <payload>\n"); return 0; }
 
     payloadSize = readpic(argv[1], &payload);
     if(payloadSize == 0) { wprintf(L"unable to read from %s\n", argv[1]); return 0; }
