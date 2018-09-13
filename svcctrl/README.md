@@ -10,18 +10,17 @@
 <p>The following structure is supported by versions of windows 7.</p>
 
 <pre>
-typedef struct _SERVICE_ENTRY {
-  INTERNAL_DISPATCH_ENTRY ide;               // copy of IDE
-  WCHAR                   svcName[MAX_PATH];
-  WCHAR                   svcReal[MAX_PATH];
-  LPVOID                  ide_addr;          // remote address of IDE
-  WCHAR                   service[MAX_PATH]; // name of service
-  DWORD                   tid;               // thread id belonging to service
-  DWORD                   pid;               // process id hosting service
-  WCHAR                   process[MAX_PATH]; // process name hosting service
-  BOOL                    bAll;
-  HANDLE                  hThread;
-} SERVICE_ENTRY, *PSERVICE_ENTRY;
+typedef struct _INTERNAL_DISPATCH_ENTRY {
+    LPWSTR                  ServiceName;
+    LPWSTR                  ServiceRealName;
+    LPSERVICE_MAIN_FUNCTION ServiceStartRoutine;
+    LPHANDLER_FUNCTION_EX   ControlHandler;
+    HANDLE                  StatusHandle;
+    DWORD                   ServiceFlags;
+    DWORD                   Tag;
+    HANDLE                  MainThreadHandle;
+    DWORD                   dwReserved;
+} INTERNAL_DISPATCH_ENTRY, *PINTERNAL_DISPATCH_ENTRY;
 </pre>
 
 <p>The following structure is supported by versions of windows 10.</p>
