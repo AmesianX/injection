@@ -1,4 +1,0 @@
-SubclassProc
-FindExport
-xGetProcAddress
-xstrcmp

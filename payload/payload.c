@@ -35,7 +35,24 @@ typedef UINT (WINAPI *WinExec_t)(
 LPVOID xGetProcAddress(LPVOID pszAPI);
 int xstrcmp(char*,char*);
 
-DWORD Handler(DWORD dwControl) {
+#ifdef WINDOW // Extra Window Bytes
+LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, 
+  WPARAM wParam, LPARAM lParam)
+#endif
+  
+#ifdef SVCCTRL // Service Control Handler
+DWORD Handler(DWORD dwControl)
+#endif
+
+#ifdef SUBCLASS // PROPagate
+LRESULT CALLBACK SubclassProc(HWND hWnd, UINT uMsg, WPARAM wParam, 
+  LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
+#endif
+
+#ifdef CONSOLE // ConsoleWindowClass
+HWND GetWindowHandle(VOID)
+#endif
+{
     WinExec_t pWinExec;
     DWORD     szWinExec[2],
               szNotepad[3];
@@ -44,7 +61,7 @@ DWORD Handler(DWORD dwControl) {
     szWinExec[0]=0x456E6957;
     szWinExec[1]=0x00636578;
 
-    // notepad
+    // runs notepad
     szNotepad[0] = *(DWORD*)"note";
     szNotepad[1] = *(DWORD*)"pad\0";
 

