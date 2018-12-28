@@ -536,6 +536,8 @@ BOOL GetServiceIDE(PSERVICE_ENTRY ste) {
     // get the name and id of process hosting service
     if (!GetServiceInfo(ste)) return FALSE;
     
+    wprintf(L"Process id for %s is %ld\n", ste->service, ste->pid);
+    
     // try open the host process
     hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, ste->pid);
     
@@ -586,7 +588,7 @@ DWORD readpic(PWCHAR path, LPVOID *pic){
 
 VOID usage(VOID){
     wprintf(L"\nusage: svcctrl -[options] <service name>\n\n");
-    wprintf(L"        -l          : dispaly all IDE found for process scanned\n");
+    wprintf(L"        -l          : display all IDE found for process scanned\n");
     wprintf(L"        -i <pic>    : inject a payload into host process using service\n");
     wprintf(L"        -t <handle> : validate by thread handle instead of service name\n");
     wprintf(L"        -s          : stop service\n");

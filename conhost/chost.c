@@ -144,7 +144,12 @@ VOID conhostInject(LPVOID payload, DWORD payloadSize) {
 
     // 2. Obtain the process id for the host process 
     pid = conhostId(ppid);
-
+    
+    // csrss.exe spawns conhost.exe on 32-bit windows 
+    if (pid==0) {
+      printf("parent id is %ld\nunable to obtain pid of conhost.exe\n", ppid);
+      return;
+    }
     // 3. Open the conhost.exe process
     hp = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pid);
 
